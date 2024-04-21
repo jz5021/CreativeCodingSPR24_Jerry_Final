@@ -1,0 +1,26 @@
+So as of right now I've chosen to go forward with my first idea: ID.
+I will change some parts of the project in order to make it take full advantage of p5's full capabilities.
+
+Here's my reasoning for my choice as well as the changes I will be making:
+
+- I found faults in my first project because it doesn't take full advantage of p5's capabilities in terms of user interaction.
+  Why would I make an animation when I could make this so much easier as well as BETTER in a different program dedicated to animation.
+  P5's uniquess in my eyes comes from the user interaction part of the program so an animation doesn't utilize this.
+
+- My second idea, which has a real potential for this interactive capability doesn't actually come across as something that will be useful to me in the future.
+  Although it's a cool idea with a lot of meat in terms of meaning, I just don't see how it benefits me other than showcasing my ability to use p5.js.
+  The idea of having a clickable interaction could be fulfilled through my first idea.
+
+- My third idea has a lot of potential as well; however, this requires a lot of deep understanding and experimentation for a single image.
+  From my understanding of algorithmic processes for generative art, the code you write for one image basically only makes one image look good.
+  As such, there are far better programs that can make these images in a more efficient manner as well.
+
+- So now for my choice and the changes I will be making to it.
+  I still want to stick with the idea of my identity as a multimedia artist and the different roles I play.
+  Instead of making it so that you click on the character to change the background, I want to take inspiration from choosing classes in a game (warrior, mage, etc.)
+  I want to communicate my background as someone who enjoys video games, and I think the most impactful franchise I have sunk thousands of hours into is Pokemon.
+  As such, I want to create a sort of fusion between a class selection screen (which invites user interaction) combined with the visuals of a Pokemon game.
+  I understand that this is a coding class, so I will create a wireframe using shapes in order to communicate the idea, and I will "skin" the game as much as possible as well
+  because this is a crucial part of the project.
+  My inspiration will largely come from the sprites created in generation 5 of the games: https://archives.bulbagarden.net/wiki/Category:Generation_V_Trainer_sprites
+  These are unforunately, 80 x 80 pixel art images, which is a heavy load, so I can't guarantee the quality of the sprites as well as my backgrounds.
