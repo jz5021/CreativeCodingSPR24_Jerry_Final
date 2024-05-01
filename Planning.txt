@@ -24,3 +24,10 @@ Here's my reasoning for my choice as well as the changes I will be making:
   because this is a crucial part of the project.
   My inspiration will largely come from the sprites created in generation 5 of the games: https://archives.bulbagarden.net/wiki/Category:Generation_V_Trainer_sprites
   These are unforunately, 80 x 80 pixel art images, which is a heavy load, so I can't guarantee the quality of the sprites as well as my backgrounds.
+
+
+  Update 05/01/2024
+  - I decided that working on this idea was a bit unfuilfilling to me, and I have decided to switch over to my second proposal because it somehow just feels more right to me
+  - I haven't had much time to work on the code because I've had to work over the weekend this past week as well as just finish up final projects that are due earlier than this final project.
+  - I have been primarily thinking about the progression of my scene and planning it out properly, but I feel like this might also be me coping with the fact that I'm not getting anything down on paper yet.
+  - As for right now, I'll be working on a lo-fi wireframe vesion of my piece not necessarily utilizing all of the finished renderings of models
