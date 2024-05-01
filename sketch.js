@@ -11,7 +11,7 @@ let eyeArray = [];
 function setup(){
     createCanvas(1920,1080);
 
-    shop = new shopButton(0, 0, 400, 200);
+    shop = new shopButton(width/2, height/2, 400, 200);
 }
 
 function draw(){
@@ -35,25 +35,20 @@ class shopButton{
         if(this.mouseOver){
             fill(150);
         } else {
-            fill(255);
+            fill(225);
         }
         
-        push();
-        translate(width/2, height/2);
-        rect(this.x, this.y, this.w, this.h);
-        pop();
+        rect(this.x, this.y, this.w, this.h); //draws rect at (960, 540)
+
     }
 
     update(){
-        push();
-        translate(width/2, height/2);
-        if (mouseX > -this.w / 2 && mouseX < this.w / 2 &&
-            mouseY > -this.h / 2 && mouseY < this.h / 2){
+        if (mouseX > this.x - this.w/2 && mouseX < this.x + this.w/2 &&
+            mouseY > this.y - this.h/2 && mouseY < this.y + this.h/2){
             this.mouseOver = true;
         } else {
             this.mouseOver = false;
         }
-        pop();
     }
 
 }
