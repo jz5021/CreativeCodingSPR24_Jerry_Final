@@ -1,8 +1,17 @@
 //Jerry Zhao_Final Project
 
-let shop;
+
 let eyeArray = [];
-let buttonClickCount = 0;
+let buttonClick = 0;
+let buttonClickTemp;
+
+let buttonLeft;
+let buttonRight;
+let buttonTop;
+let buttonBottom;
+
+let attempts;
+let maxAttempts;
 
 /*function preload(){
     shop = loadImage('');
@@ -12,18 +21,51 @@ let buttonClickCount = 0;
 function setup(){
     createCanvas(1920,1080);
 
-    shop = new shopButton(width/2, height/2, 400, 200);
+    shop = new ShopButton(width/2, height/2, 400, 200);
+    buttonLeft = shop.x - (shop.w/2+25);
+    buttonRight = shop.x + (shop.w/2 +25);
+    buttonTop = shop.y - (shop.h/2 + 25);
+    buttonBottom = shop.y + (shop.h/2 +25);
+
+    attempts = 0;
+    maxAttempts = 1000;
 }
 
 function draw(){
+    buttonClickTemp = buttonClick;
     background(0);
     shop.display();
     shop.update();
     buttonClick = shop.getButtonClick();
+    
+    if(buttonClickTemp < buttonClick){
+        for(let i = 0; i <= buttonClick * 2; i ++){
+            while(attempts < maxAttempts){
+                let w = random(width);
+                let h = random(height);
+                let eyeR = random(25,100);
+                let pupilR = random(5, 24);
+
+            //Validation of whether or not the eye is within the radius of the button or not
+                if(!(w > buttonLeft && w < buttonRight && h > buttonTop && h < buttonBottom)) {
+                    eyeArray.push(new Eye(w, h, eyeR, pupilR));
+                    attempts = 0;
+                    break;
+                }
+                attempts += 1;
+            }
+        }
+    }
+    
+    for(let eye of eyeArray){
+        eye.lookAt(mouseX, mouseY);
+        eye.display();
+    }
+
     print(buttonClick);
 }
 
-class shopButton{
+class ShopButton{
     constructor(xPos, yPos, width, height){
         this.x = xPos;
         this.y = yPos;
@@ -42,7 +84,6 @@ class shopButton{
         if(this.mouseOver){
             fill(150);
             if(this.buttonClick){
-                this.mouseOver = !this.mouseOver;
                 fill(50);
             }
         } else {
@@ -79,6 +120,45 @@ class shopButton{
     }
 }
 
-function mouseClicked(){
+class Eye {
+    constructor(x, y, eyeRadius, pupilRadius) {
+      this.eye = createVector(x, y);
+      this.pupil = createVector(x, y);
+      this.eyeRadius = eyeRadius;
+      this.pupilRadius = pupilRadius;
+    }
+  
+    lookAt(x, y) {
+      let angle = atan2(y - this.eye.y, x - this.eye.x); //This calculates the angle between the center of the eye and mouse cursor's position
+      let maxDistance = this.eyeRadius - this.pupilRadius; // This finds the total amount of distance that the pupil can actually move
+      let distance = dist(this.eye.x, this.eye.y, x, y); // This calculates the distance between eye center and mouse cursor 
+      distance = min(distance, maxDistance); // Limit distance to maximum allowable distance that the pupil can move  
+      
+      // Calculate position of pupil based on adjusted distance and angle
+      this.pupil.x = this.eye.x + cos(angle) * distance;
+      this.pupil.y = this.eye.y + sin(angle) * distance;
+    }
+  
+    display() {
+      //Eye
+      fill(255);
+      beginShape();
+      for (let i = 0; i < TWO_PI; i += PI / 360) {
+        let x = this.eye.x + cos(i) * this.eyeRadius;
+        let y = this.eye.y + sin(i) * this.eyeRadius;
+        vertex(x, y);
+      }
+      endShape(CLOSE);
+  
+      //Pupil
+      fill(0);
+      ellipse(this.pupil.x, this.pupil.y, this.pupilRadius * 2, this.pupilRadius * 2);
+    }
+  }
 
+function behaviorChange(){
+
+    if(clickCount > 3){
+        
+    }
 }
