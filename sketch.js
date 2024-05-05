@@ -77,6 +77,7 @@ function draw(){
         }
     }
 
+    drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
     print(state);
 }
 
@@ -157,6 +158,7 @@ class Eye {
     }
 
     lookAtMouse(x, y){
+        frameRate(60);
         let angle = atan2(y - this.eye.y, x - this.eye.x); //This calculates the angle between the center of the eye and mouse cursor's position
         let maxDistance = this.eyeRadius - this.pupilRadius; // This finds the total amount of distance that the pupil can actually move
         let distance = dist(this.eye.x, this.eye.y, x, y); // This calculates the distance between eye center and mouse cursor 
@@ -169,6 +171,7 @@ class Eye {
     }
 
     lookAtUser(){
+        frameRate(24);
         this.isLookingAtUser = true;
 
         // calculates the angle towards the eye center
@@ -223,17 +226,14 @@ class Eye {
         
         //Erratic Eye
         else if (this.isLookingAtUser == true){
-            push();
-            translate(this.eye.x, this.eye.y)
-            scale(random(.5, 1), random(1, 1.5));
+            fill(0);
+            beginShape();
             for (let i = 0; i < TWO_PI; i += PI / 360) {
-                let x = 0 + cos(i) * this.eyeRadius;
-                let y = 0 + sin(i) * this.eyeRadius;
+                let x = this.eye.x + cos(i) * this.eyeRadius;
+                let y = this.eye.y + sin(i) * this.eyeRadius;
                 vertex(x, y);
             }
             endShape(CLOSE);
-            pop();
-            
             
             //Pupil
             noStroke();
@@ -246,3 +246,29 @@ class Eye {
         }
         }
   }
+
+function drawVignette(centerX, centerY, radius) {
+    loadPixels();
+
+    //Iterates through all the pixels on the screen and figures out just how to draw the vignette depending on screen size
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let dx = x - centerX;
+            let dy = y - centerY;
+
+            //Pythagorean theorem for distance calculations including diagonals
+            let distanceSq = dx * dx + dy * dy;
+            let distance = sqrt(distanceSq);
+
+            // this maps the distance of the pixel to the darkness level it should have depending on distane from center, also some massaging of data values to get values I want
+            let darkness = map(distance, 0, radius * (.2 + (buttonClick * .075)), 255, 0); 
+            let pixelIndex = (x + y * width) * 4;
+
+            //Color channel adjustment for colors
+            pixels[pixelIndex] += darkness; // Red Channel
+            pixels[pixelIndex + 2] += darkness; // Green Channel
+            pixels[pixelIndex + 1] += darkness; // Blue Channel
+        }
+    }
+    updatePixels();
+}
