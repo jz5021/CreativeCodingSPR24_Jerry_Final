@@ -141,7 +141,9 @@ class Eye {
       this.pupil = createVector(x, y);
       this.eyeRadius = eyeRadius;
       this.pupilRadius = pupilRadius;
-      this.transitionSpeed = 0.02; // Adjust transition speed as needed
+      this.transitionSpeed = .07 //this is how fast the movement of the pupil is, this seems to be a sweet spot
+      this.isLookingAtUser = false;
+      
     }
   
     lookAtCenter(){
@@ -149,7 +151,7 @@ class Eye {
         let maxDistance = this.eyeRadius - this.pupilRadius; // Limit the maximum allowable distance that the pupil can move
         let distance = min(dist(this.eye.x, this.eye.y, width / 2, height / 2), maxDistance); // Calculate distance from the eye to the center of the screen
         
-        // Calculate position of pupil based on adjusted distance and angle
+        // this calculates the adjusted angle per pupil to look towards teh center
         this.pupil.x = this.eye.x + cos(angle) * distance;
         this.pupil.y = this.eye.y + sin(angle) * distance;
     }
@@ -167,12 +169,23 @@ class Eye {
     }
 
     lookAtUser(){
-        let angle = atan2(this.eye.y - this.pupil.y, this.eye.x - this.pupil.x); // Angle towards eye center
+        this.isLookingAtUser = true;
+
+        // calculates the angle towards the eye center
+        let angle = atan2(this.eye.y - this.pupil.y, this.eye.x - this.pupil.x);
+        // calculates the distance between the pupil and the eye center to prep for the movement of the pupil
         let distance = dist(this.pupil.x, this.pupil.y, this.eye.x, this.eye.y);
-        if (distance > 1) {
-            this.pupil.x += cos(angle) * this.transitionSpeed * distance;
-            this.pupil.y += sin(angle) * this.transitionSpeed * distance;
-        }
+
+        // the total amount of shaking that the pupil undergoes
+        let maxVibration = random(0,2); // Adjust as needed
+
+        // uses the the +/- vibration bounds in order to make the pupil kind of shake menacingly
+        this.pupil.x += cos(angle) * this.transitionSpeed * distance + random(-maxVibration, maxVibration);
+        this.pupil.y += sin(angle) * this.transitionSpeed * distance + random(-maxVibration, maxVibration);
+
+        // Ensure the pupil stays within the eye bounds
+        this.pupil.x = constrain(this.pupil.x, this.eye.x - this.eyeRadius + this.pupilRadius, this.eye.x + this.eyeRadius - this.pupilRadius);
+        this.pupil.y = constrain(this.pupil.y, this.eye.y - this.eyeRadius + this.pupilRadius, this.eye.y + this.eyeRadius - this.pupilRadius);
     }
 
     display() {
@@ -184,23 +197,52 @@ class Eye {
     for (let r = this.eyeRadius + 20; r >= this.eyeRadius; r--) {
         let gradientColor = lerpColor(outerColor, innerColor, map(r, this.eyeRadius, this.eyeRadius + 20, 0, 1)); //map the transition between color to the total radius around the eye
         stroke(gradientColor);
-        strokeWeight(2); // stroke weight for just how large to make something look
+        strokeWeight(1); // stroke weight for just how large to make something look
         noFill();
         ellipse(this.eye.x, this.eye.y, r * 2, r * 2);
     }
 
-    fill(255);
-        beginShape();
-        for (let i = 0; i < TWO_PI; i += PI / 360) {
-            let x = this.eye.x + cos(i) * this.eyeRadius;
-            let y = this.eye.y + sin(i) * this.eyeRadius;
-            vertex(x, y);
-        }
-        endShape(CLOSE);
+        //Normal Eye
+        if (this.isLookingAtUser == false){
+            
+            //Eye
+            fill(0);
+            beginShape();
+            for (let i = 0; i < TWO_PI; i += PI / 360) {
+                let x = this.eye.x + cos(i) * this.eyeRadius;
+                let y = this.eye.y + sin(i) * this.eyeRadius;
+                vertex(x, y);
+            }
+            endShape(CLOSE);
 
-        //Pupil
-        noStroke();
-        fill(0);
-        ellipse(this.pupil.x, this.pupil.y, this.pupilRadius* .5, this.pupilRadius * 2.5);
-    }
+            //Pupil
+            noStroke();
+            fill(255);
+            ellipse(this.pupil.x, this.pupil.y, this.pupilRadius* .5, this.pupilRadius * 2.5);
+        } 
+        
+        //Erratic Eye
+        else if (this.isLookingAtUser == true){
+            push();
+            translate(this.eye.x, this.eye.y)
+            scale(random(.5, 1), random(1, 1.5));
+            for (let i = 0; i < TWO_PI; i += PI / 360) {
+                let x = 0 + cos(i) * this.eyeRadius;
+                let y = 0 + sin(i) * this.eyeRadius;
+                vertex(x, y);
+            }
+            endShape(CLOSE);
+            pop();
+            
+            
+            //Pupil
+            noStroke();
+            fill(255);
+            push();
+            translate(this.pupil.x, this.pupil.y);
+            scale(random(.5, 1), random(1, 1.5));
+            ellipse(0, 0, this.pupilRadius* .5, this.pupilRadius * 2.5);
+            pop();
+        }
+        }
   }
