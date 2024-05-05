@@ -177,7 +177,19 @@ class Eye {
 
     display() {
         //Eye
-        fill(255);
+        //Define the two colors for lerpColor gradient
+        let outerColor = color(255, 255, 255, 100);
+        let innerColor = color(255, 255, 255, 0);
+
+    for (let r = this.eyeRadius + 20; r >= this.eyeRadius; r--) {
+        let gradientColor = lerpColor(outerColor, innerColor, map(r, this.eyeRadius, this.eyeRadius + 20, 0, 1)); //map the transition between color to the total radius around the eye
+        stroke(gradientColor);
+        strokeWeight(2); // stroke weight for just how large to make something look
+        noFill();
+        ellipse(this.eye.x, this.eye.y, r * 2, r * 2);
+    }
+
+    fill(255);
         beginShape();
         for (let i = 0; i < TWO_PI; i += PI / 360) {
             let x = this.eye.x + cos(i) * this.eyeRadius;
@@ -185,9 +197,10 @@ class Eye {
             vertex(x, y);
         }
         endShape(CLOSE);
-  
+
         //Pupil
+        noStroke();
         fill(0);
-        ellipse(this.pupil.x, this.pupil.y, this.pupilRadius * 2, this.pupilRadius * 2);
+        ellipse(this.pupil.x, this.pupil.y, this.pupilRadius* .5, this.pupilRadius * 2.5);
     }
   }
