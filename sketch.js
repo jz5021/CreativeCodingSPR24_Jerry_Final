@@ -2,7 +2,7 @@
 
 
 //General Variables
-let state = 1;
+let state = 0   ;
 
 //Button Variables
 let buttonClick = 0;
@@ -43,12 +43,9 @@ function draw(){
     shop.display();
     shop.update();
     buttonClick = shop.getButtonClick(); //Consistently updates the amount of times the shop button has been pressed
-    stateUpdate(); //State update is based on the functionality of the button
 
     //Addition of new eyes
     if(buttonClickTemp < buttonClick){
-        state += 1;
-
         for(let i = 0; i <= buttonClick * 2; i ++){
             while(attempts < maxAttempts){
                 let w = random(width);
@@ -66,10 +63,18 @@ function draw(){
             }
         }
     }
-    
+
     for(let eye of eyeArray){
-            eye.display();
+        if (buttonClick <= 3){    
             eye.lookAtCenter();
+            eye.display();
+        } else if (buttonClick <= 6){
+            eye.lookAtMouse(mouseX, mouseY);
+            eye.display();
+        } else if (buttonClick > 6){ //change this to <= 9 when the time comes, but for now leave it at >6
+            eye.lookAtUser();
+            eye.display();
+        }
     }
 
     print(state);
@@ -150,9 +155,9 @@ class Eye {
     }
 
     lookAtMouse(x, y){
-        angle = atan2(y - this.eye.y, x - this.eye.x); //This calculates the angle between the center of the eye and mouse cursor's position
-        maxDistance = this.eyeRadius - this.pupilRadius; // This finds the total amount of distance that the pupil can actually move
-        distance = dist(this.eye.x, this.eye.y, x, y); // This calculates the distance between eye center and mouse cursor 
+        let angle = atan2(y - this.eye.y, x - this.eye.x); //This calculates the angle between the center of the eye and mouse cursor's position
+        let maxDistance = this.eyeRadius - this.pupilRadius; // This finds the total amount of distance that the pupil can actually move
+        let distance = dist(this.eye.x, this.eye.y, x, y); // This calculates the distance between eye center and mouse cursor 
         distance = min(distance, maxDistance); // limits the maximum allowable distance that the pupil can move  
         
         // This calculates the position of pupil based on adjusted distance and angle and will always be run no matter what state is going on
@@ -161,9 +166,9 @@ class Eye {
         
     }
 
-    lookAtUser(x, y){
-        angle = atan2(this.eye.y - this.pupil.y, this.eye.x - this.pupil.x); // Angle towards eye center
-        distance = dist(this.pupil.x, this.pupil.y, this.eye.x, this.eye.y);
+    lookAtUser(){
+        let angle = atan2(this.eye.y - this.pupil.y, this.eye.x - this.pupil.x); // Angle towards eye center
+        let distance = dist(this.pupil.x, this.pupil.y, this.eye.x, this.eye.y);
         if (distance > 1) {
             this.pupil.x += cos(angle) * this.transitionSpeed * distance;
             this.pupil.y += sin(angle) * this.transitionSpeed * distance;
@@ -186,9 +191,3 @@ class Eye {
         ellipse(this.pupil.x, this.pupil.y, this.pupilRadius * 2, this.pupilRadius * 2);
     }
   }
-
-function stateUpdate(){
-    if (buttonClick % 3 == 0){
-    state += 1;
-    }
-}
