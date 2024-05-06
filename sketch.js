@@ -77,7 +77,7 @@ function draw(){
         }
     }
 
-    drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
+    drawVignette(960, 540, 800); // Adjust the parameters as needed
     print(state);
 }
 
