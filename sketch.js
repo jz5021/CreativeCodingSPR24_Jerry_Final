@@ -1,5 +1,5 @@
 //Jerry Zhao_Final Project
-
+//This runs far slower on OpenProcessing rather than locally, so I would download this from my github @jz5021
 
 //General Variables
 let state = 0   ;
@@ -251,8 +251,8 @@ function drawVignette(centerX, centerY, radius) {
     loadPixels();
 
     //Iterates through all the pixels on the screen and figures out just how to draw the vignette depending on screen size
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
+    for (let y = 0; y < 1080; y++) {
+        for (let x = 0; x < 1920; x++) {
             let dx = x - centerX;
             let dy = y - centerY;
 
