@@ -12,6 +12,9 @@ let buttonRight;
 let buttonTop;
 let buttonBottom;
 
+//Screen
+let video;
+let aspectRatio;
 
 //Eye Variables
 let eyeArray = [];
@@ -25,7 +28,13 @@ let maxAttempts;
 
 function setup(){
     createCanvas(1920,1080);
-    shop = new ShopButton(width/2, height/2, 400, 200);
+
+    //Video Capture
+    baseVideo = createCapture(VIDEO); //starts video capture
+    baseVideo.hide(); //hides the video capture that can be revealed with capture.show();
+    baseVideo.size(640,480);
+
+    shop = new ShopButton(width/2, height/2, 320, 240);
     buttonLeft = shop.x - (shop.w/2+25);
     buttonRight = shop.x + (shop.w/2 +25);
     buttonTop = shop.y - (shop.h/2 + 25);
@@ -44,7 +53,7 @@ function draw(){
     shop.update();
     buttonClick = shop.getButtonClick(); //Consistently updates the amount of times the shop button has been pressed
 
-    //Addition of new eyes
+    //New eyes generated based on new button presses
     if(buttonClickTemp < buttonClick){
         for(let i = 0; i <= buttonClick * 2; i ++){
             while(attempts < maxAttempts){
@@ -76,8 +85,14 @@ function draw(){
             eye.display();
         }
     }
+    
 
-    drawVignette(960, 540, 800); // Adjust the parameters as needed
+    //Video Creation
+    //videoCrop(baseVideo, width/2 - )
+    imageMode(CENTER);
+    image(baseVideo, width/2, height/2)
+
+    //drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
     print(state);
 }
 
@@ -251,8 +266,8 @@ function drawVignette(centerX, centerY, radius) {
     loadPixels();
 
     //Iterates through all the pixels on the screen and figures out just how to draw the vignette depending on screen size
-    for (let y = 0; y < 1080; y++) {
-        for (let x = 0; x < 1920; x++) {
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
             let dx = x - centerX;
             let dy = y - centerY;
 
@@ -271,4 +286,39 @@ function drawVignette(centerX, centerY, radius) {
         }
     }
     updatePixels();
+}
+
+function drawVignetteSquare(xPos, yPos){
+      let centerX = width / 2;
+  let centerY = height / 2;
+  let radius = 150;
+  
+  // Define gradient colors
+  let colorStart = color(255, 0, 0); // Red
+  let colorEnd = color(0, 0, 255);   // Blue
+  
+  // Draw circle with gradient
+  noStroke();
+  beginShape(TRIANGLE_FAN);
+  vertex(centerX, centerY); // Center vertex
+  
+  for (let angle = 0; angle <= TWO_PI; angle += 0.1) {
+    // Calculate position on circle
+    let x = centerX + cos(angle) * radius;
+    let y = centerY + sin(angle) * radius;
+    
+    // Calculate color based on gradient
+    let inter = map(angle, 0, TWO_PI, 0, 1);
+    let c = lerpColor(colorStart, colorEnd, inter);
+    fill(c);
+    
+    // Draw vertex
+    vertex(x, y);
+  }
+  
+  endShape();   
+}
+
+function videoCrop(srcImage, srcX, srcY, srcWidth, srcHeight, dX, dY, dWidth, dHeight){
+    copy(srcImage, srcX, srcY, srcWidth, srcHeight, dX, dY, dWidth, dHeight);
 }
