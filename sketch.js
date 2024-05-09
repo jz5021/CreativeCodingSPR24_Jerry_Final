@@ -36,6 +36,8 @@ function setup(){
     video.size(320,240);
     video.hide(); //hides the video capture that can be revealed with capture.show();
 
+    tempImage = createImage(320, 240);
+
     //Button
     shop = new ShopButton(width/2, height/2, 320, 240);
     buttonLeft = shop.x - (shop.w/2+25);
@@ -59,12 +61,20 @@ function draw(){
     //Webcam Access
     if (buttonClick >= 12){
         //Video Creation
-        //imageMode(CENTER);
+        imageMode(CENTER);
         //image(video, width/2, height/2)
+        
         //Portrait Formatino
         if (mouseIsPressed){
-            portraitFormation();
+            video.loadPixels();
+            tempImage = createImage(video.width, video.height);
+            tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240);
+            tempImage.updatePixels();
+            if (tempImage){
+                image(tempImage, 0, 0, 320, 240);
+            }
         }
+        
     }
     //New eyes generated based on new button presses and eyes are stopped from generating after 12 clicks
     if(buttonClickTemp < buttonClick){
@@ -327,16 +337,18 @@ function drawVignetteSquare(xPos, yPos){
   endShape();   
 }
 
-function portraitFormation(){
-//Sources for learning: https://editor.p5js.org/son/sketches/LuJ2eGf9p - but this doesn't really achieve what I want it to by storing the information of a single frame into an array
+// function portraitFormation(){
+// //Sources for learning: https://editor.p5js.org/son/sketches/LuJ2eGf9p - but this doesn't really achieve what I want it to by storing the information of a single frame into an array
 
-    // video.loadPixels();
-    // let tempImage = createImage(320, 240);
-    // tempImage.copy(video, width/2 - 320/2, height/2 - 240/2, 320, 240, width/2 - 320/2, height/2 - 240/2, 320, 240);
-    // image(tempImage, width/2, height/2, 320, 240);
+//     // video.loadPixels();
+//     // let tempImage = createImage(320, 240);
+//     // tempImage.copy(video, width/2 - 320/2, height/2 - 240/2, 320, 240, width/2 - 320/2, height/2 - 240/2, 320, 240);
+//     // image(tempImage, width/2, height/2, 320, 240);
 
-    video.loadPixels();
-    tempImage = createImage(320, 240);
-    tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); // Copy entire video frame
-    image(tempImage, 0, 0, 320,240);
-}
+//     // video.loadPixels();
+//     // tempImage = createImage(320, 240);
+//     // tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); // Copy entire video frame
+//     // image(tempImage, 0, 0, 320,240);
+
+//     capturedImage = get();
+// }
