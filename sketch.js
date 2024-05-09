@@ -15,6 +15,7 @@ let buttonBottom;
 
 //Screen
 let video;
+let tempImage;
 
 //Eye Variables
 let eyeArray = [];
@@ -57,12 +58,14 @@ function draw(){
 
     //Webcam Access
     if (buttonClick >= 12){
-        portraitFormation();
         //Video Creation
-        // imageMode(CENTER);
-        // image(video, width/2, height/2)
+        //imageMode(CENTER);
+        //image(video, width/2, height/2)
+        //Portrait Formatino
+        if (mouseIsPressed){
+            portraitFormation();
+        }
     }
-
     //New eyes generated based on new button presses and eyes are stopped from generating after 12 clicks
     if(buttonClickTemp < buttonClick){
         if(buttonClick < 12){
@@ -325,8 +328,15 @@ function drawVignetteSquare(xPos, yPos){
 }
 
 function portraitFormation(){
+//Sources for learning: https://editor.p5js.org/son/sketches/LuJ2eGf9p - but this doesn't really achieve what I want it to by storing the information of a single frame into an array
+
+    // video.loadPixels();
+    // let tempImage = createImage(320, 240);
+    // tempImage.copy(video, width/2 - 320/2, height/2 - 240/2, 320, 240, width/2 - 320/2, height/2 - 240/2, 320, 240);
+    // image(tempImage, width/2, height/2, 320, 240);
+
     video.loadPixels();
-    let tempImage = createImage(video.width, video.height);
-    tempImage.copy(video, width/2 - video.width/2, height/2 - video.height/2, video.width, video.height, width/2 - video.width/2, height/2 - video.height/2, video.width, video.height);
-    tempImage.updatePixels();
+    tempImage = createImage(320, 240);
+    tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); // Copy entire video frame
+    image(tempImage, 0, 0, 320,240);
 }
