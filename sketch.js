@@ -1,5 +1,6 @@
 //Jerry Zhao_Final Project
 //This runs far slower on OpenProcessing rather than locally, so I would download this from my github @jz5021
+//Inspiration and resources all camee from Shiffman's code surrounding videos and manipulation of these pixels
 
 //General Variables
 let state = 0   ;
@@ -14,7 +15,6 @@ let buttonBottom;
 
 //Screen
 let video;
-let aspectRatio;
 
 //Eye Variables
 let eyeArray = [];
@@ -28,12 +28,14 @@ let maxAttempts;
 
 function setup(){
     createCanvas(1920,1080);
+    pixelDensity(1); //still trying to figure out what the point of doing this is; there's a possibility that this is what's causing an issue with the spotlight because I didn't state this and other computeres may have a highter base pixel density?
 
     //Video Capture
-    baseVideo = createCapture(VIDEO); //starts video capture
-    baseVideo.hide(); //hides the video capture that can be revealed with capture.show();
-    baseVideo.size(640,480);
+    video = createCapture(VIDEO); //starts video capture
+    video.size(320,240);
+    video.hide(); //hides the video capture that can be revealed with capture.show();
 
+    //Button
     shop = new ShopButton(width/2, height/2, 320, 240);
     buttonLeft = shop.x - (shop.w/2+25);
     buttonRight = shop.x + (shop.w/2 +25);
@@ -53,44 +55,49 @@ function draw(){
     shop.update();
     buttonClick = shop.getButtonClick(); //Consistently updates the amount of times the shop button has been pressed
 
-    //New eyes generated based on new button presses
-    if(buttonClickTemp < buttonClick){
-        for(let i = 0; i <= buttonClick * 2; i ++){
-            while(attempts < maxAttempts){
-                let w = random(width);
-                let h = random(height);
-                let eyeR = random(25,100);
-                let pupilR = random(5, 24);
+    //Webcam Access
+    if (buttonClick >= 12){
+        portraitFormation();
+        //Video Creation
+        // imageMode(CENTER);
+        // image(video, width/2, height/2)
+    }
 
-            //Validation of whether or not the eye is too close to the center of the button or not
-                if(!(w > buttonLeft && w < buttonRight && h > buttonTop && h < buttonBottom)) {
-                    eyeArray.push(new Eye(w, h, eyeR, pupilR));
-                    attempts = 0;
-                    break;
+    //New eyes generated based on new button presses and eyes are stopped from generating after 12 clicks
+    if(buttonClickTemp < buttonClick){
+        if(buttonClick < 12){
+            for(let i = 0; i <= buttonClick * 2; i ++){
+                while(attempts < maxAttempts){
+                    let w = random(width);
+                    let h = random(height);
+                    let eyeR = random(25,100);
+                    let pupilR = random(5, 24);
+
+                //Validation of whether or not the eye is too close to the center of the button or not
+                    if(!(w > buttonLeft && w < buttonRight && h > buttonTop && h < buttonBottom)) {
+                        eyeArray.push(new Eye(w, h, eyeR, pupilR));
+                        attempts = 0;
+                        break;
+                    }
+                    attempts += 1;
                 }
-                attempts += 1;
             }
         }
     }
 
-    for(let eye of eyeArray){
-        if (buttonClick <= 3){    
-            eye.lookAtCenter();
-            eye.display();
-        } else if (buttonClick <= 6){
-            eye.lookAtMouse(mouseX, mouseY);
-            eye.display();
-        } else if (buttonClick > 6){ //change this to <= 9 when the time comes, but for now leave it at >6
-            eye.lookAtUser();
-            eye.display();
+    //Eye Generation
+        for(let eye of eyeArray){
+            if (buttonClick <= 3){    
+                eye.lookAtCenter();
+                eye.display();
+            } else if (buttonClick <= 6){
+                eye.lookAtMouse(mouseX, mouseY);
+                eye.display();
+            } else if (buttonClick > 6){ //change this to <= 9 when the time comes, but for now leave it at >6
+                eye.lookAtUser();
+                eye.display();
+            }
         }
-    }
-    
-
-    //Video Creation
-    //videoCrop(baseVideo, width/2 - )
-    imageMode(CENTER);
-    image(baseVideo, width/2, height/2)
 
     //drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
     print(state);
@@ -173,7 +180,6 @@ class Eye {
     }
 
     lookAtMouse(x, y){
-        frameRate(60);
         let angle = atan2(y - this.eye.y, x - this.eye.x); //This calculates the angle between the center of the eye and mouse cursor's position
         let maxDistance = this.eyeRadius - this.pupilRadius; // This finds the total amount of distance that the pupil can actually move
         let distance = dist(this.eye.x, this.eye.y, x, y); // This calculates the distance between eye center and mouse cursor 
@@ -186,7 +192,6 @@ class Eye {
     }
 
     lookAtUser(){
-        frameRate(24);
         this.isLookingAtUser = true;
 
         // calculates the angle towards the eye center
@@ -319,6 +324,9 @@ function drawVignetteSquare(xPos, yPos){
   endShape();   
 }
 
-function videoCrop(srcImage, srcX, srcY, srcWidth, srcHeight, dX, dY, dWidth, dHeight){
-    copy(srcImage, srcX, srcY, srcWidth, srcHeight, dX, dY, dWidth, dHeight);
+function portraitFormation(){
+    video.loadPixels();
+    let tempImage = createImage(video.width, video.height);
+    tempImage.copy(video, width/2 - video.width/2, height/2 - video.height/2, video.width, video.height, width/2 - video.width/2, height/2 - video.height/2, video.width, video.height);
+    tempImage.updatePixels();
 }
