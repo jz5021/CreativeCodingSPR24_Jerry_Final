@@ -1,6 +1,7 @@
 //Jerry Zhao_Final Project
 //This runs far slower on OpenProcessing rather than locally, so I would download this from my github @jz5021
 //Inspiration and resources all camee from Shiffman's code surrounding videos and manipulation of these pixels
+//Possibly create an instance of a video capture instead of making it a still image
 
 //General Variables
 let state = 0   ;
@@ -34,7 +35,7 @@ function setup(){
     //Video Capture
     video = createCapture(VIDEO); //starts video capture
     video.size(320,240);
-    video.hide(); //hides the video capture that can be revealed with capture.show();
+    // video.hide(); //hides the video capture that can be revealed with capture.show();
 
     tempImage = createImage(320,240);
 
@@ -61,21 +62,25 @@ function draw(){
     //Webcam Access
     if (buttonClick >= 12){
         //Video Creation
-        imageMode(CENTER);
-        //image(video, width/2, height/2)
+        // imageMode(CENTER);
+        // image(video, width/2, height/2)
         
         //Portrait Formation - https://github.com/processing/p5.js/issues/599
 
         if (mouseIsPressed){
+            // imageMode(CENTER);
+            // image(video, width/2, height/2)
+            
             console.log("Mouse is pressed", tempImage.pixels.length);
             video.loadPixels();
-            tempImage.loadPixels();
+            // tempImage.loadPixels();
             tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); //To check that this system is working properly
-            tempImage.updatePixels();
+            video.updatePixels();
+            // tempImage.updatePixels();
             image(tempImage, width/2, height/2, 320, 240);
-            // if (tempImage){
-            //     image(tempImage, 0, 0, 320, 240);
-            // }
+            if (tempImage){
+                image(tempImage, 0, 0, 320, 240);
+            }
         }
         
     }
@@ -117,11 +122,13 @@ function draw(){
 
     //drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
     
-    push()
-    stroke(255);
+    push();
+    noFill();
+    stroke(255,0,0);
     strokeWeight(10);
-    image(tempImage, width/2, height/2, 320, 240);
+    rect(width/2,height/2,320, 240);
     pop();
+    image(tempImage, width/2, height/2, 320, 240);
 }
 
 class ShopButton{
