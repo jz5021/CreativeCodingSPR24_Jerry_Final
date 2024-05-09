@@ -36,7 +36,7 @@ function setup(){
     video.size(320,240);
     video.hide(); //hides the video capture that can be revealed with capture.show();
 
-    tempImage = createImage(320, 240);
+    tempImage = createImage(320,240);
 
     //Button
     shop = new ShopButton(width/2, height/2, 320, 240);
@@ -50,7 +50,7 @@ function setup(){
 }
 
 function draw(){
-    background(0);
+     background(0);
     
     //Shop Button
     buttonClickTemp = buttonClick;
@@ -64,15 +64,18 @@ function draw(){
         imageMode(CENTER);
         //image(video, width/2, height/2)
         
-        //Portrait Formatino
+        //Portrait Formation - https://github.com/processing/p5.js/issues/599
+
         if (mouseIsPressed){
+            console.log("Mouse is pressed", tempImage.pixels.length);
             video.loadPixels();
-            tempImage = createImage(video.width, video.height);
-            tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240);
+            tempImage.loadPixels();
+            tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); //To check that this system is working properly
             tempImage.updatePixels();
-            if (tempImage){
-                image(tempImage, 0, 0, 320, 240);
-            }
+            image(tempImage, width/2, height/2, 320, 240);
+            // if (tempImage){
+            //     image(tempImage, 0, 0, 320, 240);
+            // }
         }
         
     }
@@ -113,7 +116,12 @@ function draw(){
         }
 
     //drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
-    print(state);
+    
+    push()
+    stroke(255);
+    strokeWeight(10);
+    image(tempImage, width/2, height/2, 320, 240);
+    pop();
 }
 
 class ShopButton{
