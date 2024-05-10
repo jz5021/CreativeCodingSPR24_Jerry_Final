@@ -18,15 +18,19 @@ let buttonBottom;
 let video;
 let tempImage;
 let cGlow = 15; //circular glow
+let interval = 600; //dictates how fast the blinking of the icon is
+let action = 1; //dictates which icon shows up
 
 //Eye Variables
 let eyeArray = [];
 let attempts;
 let maxAttempts;
 
-/*function preload(){
-    shop = loadImage('');
-}*/
+function preload() {
+    shoppingCart = loadImage('assets/ShoppingCart.png');
+    heart = loadImage('assets/Heart.png');
+    camera = loadImage('assets/Camera.png');
+}
 
 function setup() {
     createCanvas(1920, 1080);
@@ -55,19 +59,34 @@ function draw() {
     buttonClickTemp = buttonClick;
     shop.display();
     shop.update();
+
     buttonClick = shop.getButtonClick(); //Consistently updates the amount of times the shop button has been pressed
 
-    drawCircularGlow(width / 2, height / 2, 100, 30, cGlow);
+    drawCircularGlow(width / 2, height / 2, 120, 50, cGlow);
+
+    //Shop Icon & Blinking animation
+    if (millis() % (2 * interval) < interval) {
+        imageMode(CENTER);
+        if (action == 1) {
+            shoppingCart.resize(110, 100);
+            image(shoppingCart, width / 2, height / 2);
+        } else if (action == 2) {
+            heart.resize(110, 100);
+            image(heart, width / 2, height / 2);
+        } else if (action == 3) {
+            camera.resize(110, 100);
+            image(camera, width / 2, height / 2);
+        }
+    }
 
     //Webcam Access
     if (buttonClick >= 12 && buttonClick < 20) {
         portraitFormation();
-    } else if (buttonClick > 20){
+    } else if (buttonClick > 20) {
         imageMode(CENTER);
-        image(video, width/2, height/2)
+        image(video, width / 2, height / 2)
     }
 
-    
     //New eyes generated based on new button presses and eyes are stopped from generating after 12 clicks
     if (buttonClickTemp < buttonClick) {
         if (buttonClick < 12) {
@@ -133,7 +152,18 @@ class ShopButton {
             fill(225);
         }
 
+        //Monitor
+        push();
+        strokeWeight(10);
+        stroke(100);
         rect(this.x, this.y, this.w, this.h); //draws rect at center of screen
+        pop();
+
+        //Monitor Stand
+        push();
+        fill(100);
+        arc(this.x, this.y + 160.5, 200, 75, PI, TWO_PI);
+        pop();
     }
 
     update() {
@@ -354,5 +384,13 @@ function drawCircularGlow(centerX, centerY, baseRadius, maxOpacity, numCircles) 
         fill(fillColor);
         noStroke();
         ellipse(centerX, centerY, radius * 3);
+    }
+}
+
+function mousePressed(){
+    if (action < 3) {
+        action += 1;
+    } else if (action >= 3) {
+        action = 1;
     }
 }
