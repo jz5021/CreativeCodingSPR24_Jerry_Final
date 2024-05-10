@@ -53,36 +53,18 @@ function setup(){
 function draw(){
      background(0);
     
-    //Shop Button
+//Shop Button
     buttonClickTemp = buttonClick;
     shop.display();
     shop.update();
     buttonClick = shop.getButtonClick(); //Consistently updates the amount of times the shop button has been pressed
 
-    //Webcam Access
+//Webcam Access
     if (buttonClick >= 12){
         //Video Creation
         // imageMode(CENTER);
         // image(video, width/2, height/2)
-        
-        //Portrait Formation - https://github.com/processing/p5.js/issues/599
-
-        if (mouseIsPressed){
-            // imageMode(CENTER);
-            // image(video, width/2, height/2)
-            
-            console.log("Mouse is pressed", tempImage.pixels.length);
-            video.loadPixels();
-            // tempImage.loadPixels();
-            tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); //To check that this system is working properly
-            video.updatePixels();
-            // tempImage.updatePixels();
-            image(tempImage, width/2, height/2, 320, 240);
-            if (tempImage){
-                image(tempImage, 0, 0, 320, 240);
-            }
-        }
-        
+        portraitFormation();
     }
     //New eyes generated based on new button presses and eyes are stopped from generating after 12 clicks
     if(buttonClickTemp < buttonClick){
@@ -106,7 +88,7 @@ function draw(){
         }
     }
 
-    //Eye Generation
+//Eye Generation
         for(let eye of eyeArray){
             if (buttonClick <= 3){    
                 eye.lookAtCenter();
@@ -121,14 +103,6 @@ function draw(){
         }
 
     //drawVignette(width / 2, height / 2, 800); // Adjust the parameters as needed
-    
-    push();
-    noFill();
-    stroke(255,0,0);
-    strokeWeight(10);
-    rect(width/2,height/2,320, 240);
-    pop();
-    image(tempImage, width/2, height/2, 320, 240);
 }
 
 class ShopButton{
@@ -352,18 +326,78 @@ function drawVignetteSquare(xPos, yPos){
   endShape();   
 }
 
-// function portraitFormation(){
-// //Sources for learning: https://editor.p5js.org/son/sketches/LuJ2eGf9p - but this doesn't really achieve what I want it to by storing the information of a single frame into an array
+function portraitFormation(){
+//Sources for learning: https://editor.p5js.org/son/sketches/LuJ2eGf9p - but this doesn't really achieve what I want it to by storing the information of a single frame into an array
+//Portrait Formation - https://github.com/processing/p5.js/issues/599
 
-//     // video.loadPixels();
-//     // let tempImage = createImage(320, 240);
-//     // tempImage.copy(video, width/2 - 320/2, height/2 - 240/2, 320, 240, width/2 - 320/2, height/2 - 240/2, 320, 240);
-//     // image(tempImage, width/2, height/2, 320, 240);
+    if (mouseIsPressed){
+        
+    //Actual copying of the pixels over from the video to the tempImage
+        video.loadPixels();
+        tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); //Copies the pixels from the base video into the tempImage to be displayed
+        video.updatePixels();
+        
+    //Gradual Un-pixelation of image
+    //Looking back on it now, I definitely could have just used the blur function, but I wanted to show that I knew how to manipulate the individual values of pixels
+        let pixelSize = Math.floor(400/buttonClick - 10);
+        tempImage.loadPixels(); // Load the pixels of the image
 
-//     // video.loadPixels();
-//     // tempImage = createImage(320, 240);
-//     // tempImage.copy(video, 0, 0, 320, 240, 0, 0, 320, 240); // Copy entire video frame
-//     // image(tempImage, 0, 0, 320,240);
+        for (let y = 0; y < tempImage.height; y += pixelSize) {
+          for (let x = 0; x < tempImage.width; x += pixelSize) {
+            
+            //Initialization of variables that will hold the total sum of the RGB Channels within a certain box dictated by pixelSize 
+            let sumR = 0;
+            let sumG = 0;
+            let sumB = 0;
+            
+            //Iteration through columns and rows using different pixel x and pixel y positions
+            for (let dy = 0; dy < pixelSize; dy++) {
+              for (let dx = 0; dx < pixelSize; dx++) {
+                let px = x + dx;
+                let py = y + dy;
+      
+                if (px < tempImage.width && py < tempImage.height) { //only accesses the pixels within the bounds of the image in order to make it more efficient
+                  let index = (px + py * tempImage.width) * 4; //formula that allows for accurate storing of information of RGBA values
+                  //Gathering of the total sums of various RGB values within different pixel bounds
+                  sumR += tempImage.pixels[index];
+                  sumG += tempImage.pixels[index + 1];
+                  sumB += tempImage.pixels[index + 2];
+                }
+              }
+            }
+      
+            //Calculation of average color just through a simple average formula
+            let avgR = sumR / (pixelSize * pixelSize);
+            let avgG = sumG / (pixelSize * pixelSize);
+            let avgB = sumB / (pixelSize * pixelSize);
+      
+            //Same thought process as above that iterates through the image in a column and row fashion with steps of pixel size
+            for (let dy = 0; dy < pixelSize; dy++) {
+              for (let dx = 0; dx < pixelSize; dx++) {
+                let px = x + dx;
+                let py = y + dy;
+      
+                // Ensure within image bounds
+                if (px < tempImage.width && py < tempImage.height) {
+                  let index = (px + py * tempImage.width) * 4;
+                  tempImage.pixels[index] = avgR;
+                  tempImage.pixels[index + 1] = avgG;
+                  tempImage.pixels[index + 2] = avgB;
+                }
+              }
+            }
+          }
+        }
+        tempImage.updatePixels(); // Update the pixels of the image after pixelation
 
-//     capturedImage = get();
-// }
+    //Drawing the image only when the mouse is clicked
+        push();
+        imageMode(CENTER);
+        image(tempImage, width/2, height/2, 320, 240);
+        pop();
+    }
+}
+
+function pixelateImage(tempImage, pixelSize) {
+
+}
