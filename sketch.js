@@ -387,7 +387,8 @@ function drawCircularGlow(centerX, centerY, baseRadius, maxOpacity, numCircles) 
     }
 }
 
-function mousePressed(){
+//Dictates which icon shows up
+function mousePressed() {
     if (action < 3) {
         action += 1;
     } else if (action >= 3) {
